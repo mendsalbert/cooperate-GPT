@@ -43,8 +43,10 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
 
     file = await File.create({
       name: fileName,
+      originalName: uploadedFile.name,
       path: filePath,
       mimeType: uploadedFile.mimetype,
+      size: uploadedFile.size,
       user: req.user.id,
     });
   }
@@ -61,7 +63,7 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
     if (file) {
       const uploadResponse = await fileManager.uploadFile(file.path, {
         mimeType: file.mimeType,
-        displayName: file.name,
+        displayName: file.originalName,
       });
 
       content.unshift({
@@ -99,7 +101,10 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
 // @route   GET /api/queries
 // @access  Private
 exports.getQueries = asyncHandler(async (req, res, next) => {
-  const queries = await Query.find({ user: req.user.id });
+  const queries = await Query.find({ user: req.user.id }).populate(
+    "file",
+    "name originalName"
+  );
 
   res.status(200).json({
     success: true,
@@ -116,11 +121,48 @@ exports.getChatHistory = asyncHandler(async (req, res, next) => {
 
   const chatHistory = await Query.find({ user: req.user.id, file: fileId })
     .sort({ createdAt: 1 })
-    .populate("model", "name provider");
+    .populate("model", "name provider")
+    .populate("file", "name originalName");
 
   res.status(200).json({
     success: true,
     count: chatHistory.length,
     data: chatHistory,
+  });
+});
+
+// @desc    Upload a file
+// @route   POST /api/queries/upload
+// @access  Private
+exports.uploadFile = asyncHandler(async (req, res, next) => {
+  if (!req.files || !req.files.file) {
+    return next(new ErrorResponse("Please upload a file", 400));
+  }
+
+  const uploadedFile = req.files.file;
+  const fileName = `${Date.now()}_${uploadedFile.name}`;
+  const uploadDir = path.join(__dirname, "..", "uploads");
+
+  // Create the uploads directory if it doesn't exist
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  const filePath = path.join(uploadDir, fileName);
+
+  await uploadedFile.mv(filePath);
+
+  const file = await File.create({
+    name: fileName,
+    originalName: uploadedFile.name,
+    path: filePath,
+    mimeType: uploadedFile.mimetype,
+    size: uploadedFile.size,
+    user: req.user.id,
+  });
+
+  res.status(201).json({
+    success: true,
+    data: file,
   });
 });

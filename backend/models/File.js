@@ -5,6 +5,10 @@ const FileSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please add a file name"],
   },
+  originalName: {
+    type: String,
+    required: [true, "Please add the original file name"],
+  },
   path: {
     type: String,
     required: [true, "Please add a file path"],
@@ -12,6 +16,10 @@ const FileSchema = new mongoose.Schema({
   mimeType: {
     type: String,
     required: [true, "Please add a mime type"],
+  },
+  size: {
+    type: Number,
+    required: [true, "Please add the file size"],
   },
   user: {
     type: mongoose.Schema.ObjectId,

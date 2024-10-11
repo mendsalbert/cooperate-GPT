@@ -203,3 +203,5 @@
 {"level":"error","message":"Error: Error processing query: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent: [400 Bad Request] Unsupported MIME type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\n    at /Users/albertmends/Documents/cooperate_gpt/backend/controllers/queryController.js:93:7\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2024-10-11T14:58:57.291Z"}
 {"level":"info","message":"::1 - - [11/Oct/2024:14:58:57 +0000] \"POST /api/queries HTTP/1.1\" 500 300 \"-\" \"PostmanRuntime/7.42.0\"\n","timestamp":"2024-10-11T14:58:57.301Z"}
 {"level":"info","message":"::1 - - [11/Oct/2024:15:04:07 +0000] \"POST /api/queries HTTP/1.1\" 201 1262 \"-\" \"PostmanRuntime/7.42.0\"\n","timestamp":"2024-10-11T15:04:07.589Z"}
+{"level":"info","message":"Server is running on port 1999","timestamp":"2024-10-11T15:22:00.003Z"}
+{"level":"info","message":"::1 - - [11/Oct/2024:15:22:20 +0000] \"POST /api/queries HTTP/1.1\" 201 1168 \"-\" \"PostmanRuntime/7.42.0\"\n","timestamp":"2024-10-11T15:22:20.453Z"}
