@@ -29,4 +29,24 @@ const AIModelSchema = new mongoose.Schema({
   },
 });
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     AIModel:
+ *       type: object
+ *       required:
+ *         - name
+ *         - provider
+ *         - apiKey
+ *       properties:
+ *         name:
+ *           type: string
+ *         provider:
+ *           type: string
+ *           enum: [OpenAI, Gemini, Claude]
+ *         apiKey:
+ *           type: string
+ */
+
 module.exports = mongoose.model("AIModel", AIModelSchema);

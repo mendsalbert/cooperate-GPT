@@ -7,6 +7,7 @@ import { config } from "../lib/config";
 import { headers } from "next/headers";
 import { cookieToInitialState } from "wagmi";
 import ClientProviders from "./components/ClientProviders";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,13 +26,15 @@ export default function RootLayout({
           inter.className
         )}
       >
-        <ClientProviders initialState={initialState}>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </ClientProviders>
+        <AuthProvider>
+          <ClientProviders initialState={initialState}>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+          </ClientProviders>
+        </AuthProvider>
       </body>
     </html>
   );

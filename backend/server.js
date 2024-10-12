@@ -6,6 +6,8 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const dotenv = require("dotenv");
 const fileUpload = require("express-fileupload");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpecs = require("./swagger");
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./utils/logger");
 const queryRoutes = require("./routes/queryRoutes");
@@ -22,6 +24,9 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("combined", { stream: logger.stream }));
 app.use(fileUpload());
+
+// Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -45,8 +50,10 @@ mongoose
   });
 
 // Routes
-app.use("/api", require("./routes"));
 app.use("/api/queries", queryRoutes);
+app.use("/api/companies", require("./routes/companyRoutes"));
+app.use("/api/models", require("./routes/modelRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 // Error handling middleware
 app.use(errorHandler);

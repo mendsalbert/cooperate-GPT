@@ -41,4 +41,22 @@ const CompanySchema = new mongoose.Schema({
   },
 });
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Company:
+ *       type: object
+ *       required:
+ *         - name
+ *       properties:
+ *         name:
+ *           type: string
+ *         industry:
+ *           type: string
+ *         employeeCount:
+ *           type: number
+ *         annualRevenue:
+ *           type: number
+ */
 module.exports = mongoose.model("Company", CompanySchema);

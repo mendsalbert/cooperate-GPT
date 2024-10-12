@@ -129,11 +129,6 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
-  // Check if email is verified
-  if (!user.isEmailVerified) {
-    return next(new ErrorResponse("Please verify your email", 401));
-  }
-
   sendTokenResponse(user, 200, res);
 });
 
@@ -237,7 +232,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
 // Helper function to get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
-  // Create token
   const token = user.getSignedJwtToken();
 
   const options = {
@@ -245,14 +239,19 @@ const sendTokenResponse = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
   };
 
-  if (process.env.NODE_ENV === "production") {
-    options.secure = true;
-  }
-
-  res.status(statusCode).cookie("token", token, options).json({
-    success: true,
-    token,
-  });
+  res
+    .status(statusCode)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
 };
