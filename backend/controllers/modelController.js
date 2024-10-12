@@ -5,17 +5,12 @@ const OpenAI = require("openai");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Anthropic = require("@anthropic-ai/sdk");
 
-// @desc    Get all AI models for a user
+// @desc    Get all models for the logged-in user
 // @route   GET /api/models
 // @access  Private
 exports.getModels = asyncHandler(async (req, res, next) => {
-  const models = await AIModel.find({ user: req.user.id }).select("-apiKey");
-
-  res.status(200).json({
-    success: true,
-    count: models.length,
-    data: models,
-  });
+  const models = await AIModel.find({ user: req.user.id });
+  res.status(200).json(models);
 });
 
 // @desc    Add a new AI model
@@ -27,31 +22,32 @@ exports.addModel = asyncHandler(async (req, res, next) => {
   // Validate the API key based on the provider
   const { provider, apiKey } = req.body;
 
-  try {
-    switch (provider) {
-      case "OpenAI":
-        const openai = new OpenAI({ apiKey });
-        await openai.models.list();
-        break;
-      case "Gemini":
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        await model.generateContent("Test");
-        break;
-      case "Claude":
-        const anthropic = new Anthropic({ apiKey });
-        await anthropic.messages.create({
-          model: "claude-3-opus-20240229",
-          max_tokens: 10,
-          messages: [{ role: "user", content: "Test" }],
-        });
-        break;
-      default:
-        return next(new ErrorResponse(`Invalid provider: ${provider}`, 400));
-    }
-  } catch (error) {
-    return next(new ErrorResponse(`Invalid API key for ${provider}`, 400));
-  }
+  // try {
+  //   switch (provider) {
+  //     case "OpenAI":
+  //       const openai = new OpenAI({ apiKey });
+  //       await openai.models.list();
+  //       break;
+  //     case "Gemini":
+  //       const genAI = new GoogleGenerativeAI(apiKey);
+  //       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  //       await model.generateContent("Test");
+  //       break;
+  //     case "Claude":
+  //       const anthropic = new Anthropic({ apiKey });
+  //       await anthropic.messages.create({
+  //         model: "claude-3-opus-20240229",
+  //         max_tokens: 10,
+  //         messages: [{ role: "user", content: "Test" }],
+  //       });
+  //       break;
+  //     default:
+  //       return next(new ErrorResponse(`Invalid provider: ${provider}`, 400));
+  //   }
+  // } catch (error) {
+
+  //   return next(new ErrorResponse(`Invalid API key for ${provider}`, 400));
+  // }
 
   const model = await AIModel.create(req.body);
 

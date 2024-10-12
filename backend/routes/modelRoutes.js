@@ -5,9 +5,8 @@ const {
   addModel,
   updateModel,
   deleteModel,
-  selectModel,
-  fineTuneModel,
 } = require("../controllers/modelController");
+
 const router = express.Router();
 
 router.use(protect);
@@ -77,45 +76,5 @@ router.route("/").get(getModels).post(addModel);
  *         description: AI model not found
  */
 router.route("/:id").put(updateModel).delete(deleteModel);
-
-/**
- * @swagger
- * /api/models/{id}/select:
- *   post:
- *     summary: Select an AI model for use
- *     tags: [Models]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: AI model selected successfully
- *       404:
- *         description: AI model not found
- */
-router.post("/:id/select", selectModel);
-
-/**
- * @swagger
- * /api/models/{id}/fine-tune:
- *   post:
- *     summary: Fine-tune an AI model
- *     tags: [Models]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: AI model fine-tuning started
- *       404:
- *         description: AI model not found
- */
-router.post("/:id/fine-tune", fineTuneModel);
 
 module.exports = router;

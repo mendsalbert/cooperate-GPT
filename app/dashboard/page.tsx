@@ -32,6 +32,10 @@ import ContentsContent from "../components/ContentsContent";
 import DashboardSelection from "../components/DashboardSelection";
 import { motion, AnimatePresence } from "framer-motion";
 import AIUsageContentCompany from "../components/AIUsageContentCompany";
+import CreateModelContent from "../components/CreateModelContent";
+import ListModelsContent from "../components/ListModelsContent";
+import GenerateContentContent from "../components/GenerateContentContent";
+import FinetuneModelContent from "../components/FinetuneModelContent";
 
 export default function DashboardPage() {
   const [userType, setUserType] = useState<string | null>(null);
@@ -72,13 +76,11 @@ export default function DashboardPage() {
 
   const navItems = [
     { name: "Dashboard", icon: BarChart2, section: "dashboard" },
-    { name: "Register Content", icon: FileText, section: "register" },
-    { name: "Verify Content", icon: Shield, section: "verify" },
-    { name: "Earnings", icon: DollarSign, section: "earnings" },
-    { name: "Manage Licenses", icon: Book, section: "licenses" },
-    { name: "AI Usage Tracking", icon: Zap, section: "ai-usage" },
+    { name: "Create Model", icon: Plus, section: "create-model" },
+    { name: "List Models", icon: Folder, section: "list-models" },
+    { name: "Generate Content", icon: Zap, section: "generate-content" },
+    { name: "Finetune Model", icon: Cpu, section: "finetune-model" },
     { name: "Settings", icon: Settings, section: "settings" },
-    { name: "Contents", icon: Folder, section: "contents" },
   ];
 
   const filteredNavItems =
@@ -95,30 +97,18 @@ export default function DashboardPage() {
     switch (activeSection) {
       case "dashboard":
         return <DashboardContent />;
-      case "register":
-        return <RegisterContent />;
-      case "verify":
-        return <VerifyContent />;
-      case "earnings":
-        return <EarningsContent />;
-      case "licenses":
-        return <LicensesContent />;
-      case "ai-usage":
-        return userType === "ai-company" ? (
-          <AIUsageContentCompany />
-        ) : (
-          <AIUsageContent />
-        );
-      case "contents":
-        return <ContentsContent />;
+      case "create-model":
+        return <CreateModelContent />;
+      case "list-models":
+        return <ListModelsContent />;
+      case "generate-content":
+        return <GenerateContentContent />;
+      case "finetune-model":
+        return <FinetuneModelContent />;
       case "settings":
         return <SettingsContent />;
       default:
-        return userType === "ai-company" ? (
-          <VerifyContent />
-        ) : (
-          <DashboardContent />
-        );
+        return <DashboardContent />;
     }
   };
 

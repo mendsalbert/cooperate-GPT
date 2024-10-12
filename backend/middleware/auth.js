@@ -13,18 +13,19 @@ exports.protect = asyncHandler(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
+  console.log("Received token:", token);
+
   if (!token) {
     return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded); // Add this line
+    console.log("Decoded token:", decoded);
     req.user = await User.findById(decoded.id);
-    console.log("Found user:", req.user); // Add this line
     next();
   } catch (err) {
-    console.error("Auth error:", err); // Add this line
+    console.error("Token verification error:", err);
     return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 });

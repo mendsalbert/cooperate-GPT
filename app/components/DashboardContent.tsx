@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Image, Music, FileText, Video, Box, File } from "lucide-react";
-import { getDashboardMetrics } from "@/utils/db/actions";
+// import { getDashboardMetrics } from "@/utils/db/actions";
 import { usePrivy } from "@privy-io/react-auth";
 
 // Add this function at the top of the file, outside the component
@@ -40,21 +40,21 @@ export default function DashboardContent() {
 
   const { user } = usePrivy();
 
-  useEffect(() => {
-    async function fetchMetrics() {
-      try {
-        const data = await getDashboardMetrics(user?.email?.address || "");
-        console.log(data);
+  // useEffect(() => {
+  //   async function fetchMetrics() {
+  //     try {
+  //       const data = await getDashboardMetrics(user?.email?.address || "");
+  //       console.log(data);
 
-        setMetrics(data);
-      } catch (error) {
-        console.error("Error fetching dashboard metrics:", error);
-      }
-    }
-    if (user?.email?.address) {
-      fetchMetrics();
-    }
-  }, [user?.email?.address]);
+  //       setMetrics(data);
+  //     } catch (error) {
+  //       console.error("Error fetching dashboard metrics:", error);
+  //     }
+  //   }
+  //   if (user?.email?.address) {
+  //     fetchMetrics();
+  //   }
+  // }, [user?.email?.address]);
 
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {

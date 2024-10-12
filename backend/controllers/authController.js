@@ -110,8 +110,11 @@ exports.registerCompanyAdmin = asyncHandler(async (req, res, next) => {
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
+  console.log("Login attempt for:", email);
+
   // Validate email & password
   if (!email || !password) {
+    console.log("Missing email or password");
     return next(new ErrorResponse("Please provide an email and password", 400));
   }
 
@@ -119,6 +122,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
+    console.log("User not found:", email);
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
@@ -126,10 +130,24 @@ exports.login = asyncHandler(async (req, res, next) => {
   const isMatch = await user.matchPassword(password);
 
   if (!isMatch) {
+    console.log("Password mismatch for:", email);
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
-  sendTokenResponse(user, 200, res);
+  console.log("Login successful for:", email);
+
+  // Create token
+  const token = user.getSignedJwtToken();
+
+  res.status(200).json({
+    success: true,
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+  });
 });
 
 // @desc    Verify email
@@ -179,7 +197,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
     "host"
-  )}/api/auth/resetpassword/${resetToken}`;
+  )}/reset-password/${resetToken}`;
 
   const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
 
