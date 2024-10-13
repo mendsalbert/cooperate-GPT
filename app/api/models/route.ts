@@ -71,20 +71,21 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const session = (await getServerSession(authOptions)) as any;
 
-  if (!session) {
+  if (!session || !session.accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
     const body = await req.json();
-    const { id, ...updateData } = body;
-    const validatedData = modelSchema.partial().parse(updateData);
+    const validatedData = modelSchema.partial().parse(body);
 
     const response = await axios.put(
       `${process.env.BACKEND_URL}/api/models/${id}`,
       validatedData,
       {
-        headers: { Authorization: `Bearer ${session.user.token}` },
+        headers: { Authorization: `Bearer ${session.accessToken}` },
       }
     );
 

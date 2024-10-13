@@ -6,7 +6,6 @@ import Header from "./components/Header";
 import { config } from "../lib/config";
 import { headers } from "next/headers";
 import { cookieToInitialState } from "wagmi";
-import ClientProviders from "./components/ClientProviders";
 import Providers from "./providers/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -27,13 +26,11 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <ClientProviders initialState={initialState}>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </ClientProviders>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

@@ -5,18 +5,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Edit, Trash2 } from "lucide-react";
 import { IconBrandGoogleFilled, IconBrandOpenai } from "@tabler/icons-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 
 interface Model {
   _id: string;
   name: string;
   provider: string;
+  apiKey: string;
   createdAt: string;
 }
 
 const ListModelsContent = () => {
   const [models, setModels] = useState<Model[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState("");
+  const [editingModel, setEditingModel] = useState<Model | null>(null);
   const { data: session } = useSession() as any;
 
   useEffect(() => {
@@ -32,7 +45,7 @@ const ListModelsContent = () => {
           Authorization: `Bearer ${session.accessToken}`,
         },
       });
-      setModels(response.data.data);
+      setModels(response.data);
       setIsLoading(false);
     } catch (err) {
       setError("Failed to fetch models");
@@ -41,9 +54,45 @@ const ListModelsContent = () => {
     }
   };
 
-  const handleEdit = async (id: string) => {
-    // Implement edit functionality
-    console.log("Edit model:", id);
+  const handleEdit = async (model: Model) => {
+    setEditingModel(model);
+  };
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingModel) return;
+
+    setIsUpdating(true);
+    try {
+      await axios.put(
+        `/api/models?id=${editingModel._id}`,
+        {
+          name: editingModel.name,
+          provider: editingModel.provider,
+          apiKey: editingModel.apiKey,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+        }
+      );
+      setEditingModel(null);
+      fetchModels();
+      toast({
+        title: "Success",
+        description: "Model updated successfully",
+      });
+    } catch (err) {
+      console.error("Error updating model:", err);
+      toast({
+        title: "Error",
+        description: "Failed to update model",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -53,10 +102,18 @@ const ListModelsContent = () => {
           Authorization: `Bearer ${session.accessToken}`,
         },
       });
-      fetchModels(); // Refresh the list after deletion
+      fetchModels();
+      toast({
+        title: "Success",
+        description: "Model deleted successfully",
+      });
     } catch (err) {
       console.error("Error deleting model:", err);
-      setError("Failed to delete model");
+      toast({
+        title: "Error",
+        description: "Failed to delete model",
+        variant: "destructive",
+      });
     }
   };
 
@@ -106,14 +163,72 @@ const ListModelsContent = () => {
               Created: {new Date(model.createdAt).toLocaleDateString()}
             </p>
             <div className="flex justify-between mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleEdit(model._id)}
-              >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(model)}
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Model</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdate} className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">Name</Label>
+                      <Input
+                        id="name"
+                        value={editingModel?.name || ""}
+                        onChange={(e) =>
+                          setEditingModel((prev) =>
+                            prev ? { ...prev, name: e.target.value } : null
+                          )
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="provider">Provider</Label>
+                      <Input
+                        id="provider"
+                        value={editingModel?.provider || ""}
+                        onChange={(e) =>
+                          setEditingModel((prev) =>
+                            prev ? { ...prev, provider: e.target.value } : null
+                          )
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="apiKey">API Key</Label>
+                      <Input
+                        id="apiKey"
+                        type="password"
+                        value={editingModel?.apiKey || ""}
+                        onChange={(e) =>
+                          setEditingModel((prev) =>
+                            prev ? { ...prev, apiKey: e.target.value } : null
+                          )
+                        }
+                      />
+                    </div>
+                    <Button type="submit" disabled={isUpdating}>
+                      {isUpdating ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        "Update Model"
+                      )}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
               <Button
                 variant="destructive"
                 size="sm"

@@ -1,47 +1,28 @@
 const mongoose = require("mongoose");
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Query:
- *       type: object
- *       required:
- *         - text
- *         - response
- *         - user
- *         - model
- *       properties:
- *         text:
- *           type: string
- *           description: The query text
- *         response:
- *           type: string
- *           description: The AI-generated response
- *         user:
- *           type: string
- *           description: The ID of the user who made the query
- *         model:
- *           type: string
- *           description: The ID of the AI model used
- *         file:
- *           type: string
- *           description: The ID of the associated file (if any)
- *         createdAt:
- *           type: string
- *           format: date
- *           description: The date the query was created
- */
-const QuerySchema = new mongoose.Schema({
-  text: {
+const MessageSchema = new mongoose.Schema({
+  role: {
     type: String,
-    required: [true, "Please add a query text"],
+    enum: ["user", "assistant"],
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const QuerySchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, "Please add a chat title"],
     trim: true,
   },
-  response: {
-    type: String,
-    required: [true, "Response is required"],
-  },
+  messages: [MessageSchema],
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
@@ -57,6 +38,10 @@ const QuerySchema = new mongoose.Schema({
     ref: "File",
   },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },

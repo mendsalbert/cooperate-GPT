@@ -9,17 +9,19 @@ const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const fs = require("fs");
 const path = require("path");
 
-// @desc    Process user input query with file upload
+// @desc    Create a new chat or add to existing chat
 // @route   POST /api/queries
 // @access  Private
 exports.processQuery = asyncHandler(async (req, res, next) => {
-  const { text, modelId } = req.body;
+  const { text, modelId, chatId } = req.body;
   let file;
 
-  if (!text || !modelId) {
-    return next(
-      new ErrorResponse("Please provide query text and model ID", 400)
-    );
+  if (!text && !req.files) {
+    return next(new ErrorResponse("Please provide query text or a file", 400));
+  }
+
+  if (!modelId) {
+    return next(new ErrorResponse("Please provide a model ID", 400));
   }
 
   const model = await AIModel.findById(modelId).select("+apiKey");
@@ -52,16 +54,37 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
     });
   }
 
-  let response;
+  let query;
+  if (chatId) {
+    query = await Query.findById(chatId);
+    if (!query) {
+      return next(new ErrorResponse("Chat not found", 404));
+    }
+    if (query.user.toString() !== req.user.id) {
+      return next(new ErrorResponse("Not authorized to access this chat", 401));
+    }
+  } else {
+    query = new Query({
+      title: text ? text.substring(0, 30) + "..." : "File Upload",
+      user: req.user.id,
+      model: modelId,
+      file: file ? file._id : undefined,
+      messages: [],
+    });
+  }
 
+  // Add user message to the chat
+  query.messages.push({ role: "user", content: text || "File uploaded" });
+
+  let response;
   try {
     const genAI = new GoogleGenerativeAI(model.apiKey);
-    const fileManager = new GoogleAIFileManager(model.apiKey);
     const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    let content = [{ text }];
+    let content = [{ text: text || "Process the uploaded file" }];
 
     if (file) {
+      const fileManager = new GoogleAIFileManager(model.apiKey);
       const uploadResponse = await fileManager.uploadFile(file.path, {
         mimeType: file.mimeType,
         displayName: file.originalName,
@@ -78,13 +101,10 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
     const result = await geminiModel.generateContent(content);
     response = result.response.text();
 
-    const query = await Query.create({
-      text,
-      response,
-      user: req.user.id,
-      model: modelId,
-      file: file ? file._id : undefined,
-    });
+    // Add AI response to the chat
+    query.messages.push({ role: "assistant", content: response });
+
+    await query.save();
 
     res.status(201).json({
       success: true,
@@ -98,14 +118,13 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
   }
 });
 
-// @desc    Get all queries for a user
+// @desc    Get all chats for a user
 // @route   GET /api/queries
 // @access  Private
 exports.getQueries = asyncHandler(async (req, res, next) => {
-  const queries = await Query.find({ user: req.user.id }).populate(
-    "file",
-    "name originalName"
-  );
+  const queries = await Query.find({ user: req.user.id })
+    .select("title createdAt updatedAt messages")
+    .sort("-updatedAt");
 
   res.status(200).json({
     success: true,
@@ -114,21 +133,28 @@ exports.getQueries = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get chat history for a specific file
-// @route   GET /api/queries/chat/:fileId
+// @desc    Get a specific chat
+// @route   GET /api/queries/:id
 // @access  Private
-exports.getChatHistory = asyncHandler(async (req, res, next) => {
-  const fileId = req.params.fileId;
+exports.getQuery = asyncHandler(async (req, res, next) => {
+  const query = await Query.findById(req.params.id);
 
-  const chatHistory = await Query.find({ user: req.user.id, file: fileId })
-    .sort({ createdAt: 1 })
-    .populate("model", "name provider")
-    .populate("file", "name originalName");
+  if (!query) {
+    return next(
+      new ErrorResponse(`Chat not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  // Make sure user owns the chat
+  if (query.user.toString() !== req.user.id) {
+    return next(
+      new ErrorResponse(`User not authorized to access this chat`, 401)
+    );
+  }
 
   res.status(200).json({
     success: true,
-    count: chatHistory.length,
-    data: chatHistory,
+    data: query,
   });
 });
 
