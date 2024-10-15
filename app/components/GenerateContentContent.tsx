@@ -11,6 +11,7 @@ import {
   Trash,
   Copy,
   MessageSquare,
+  Trash2,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -176,11 +177,15 @@ const GenerateContentContent: React.FC = () => {
       setIsTyping(true);
     } catch (error) {
       console.error("Error sending message:", error);
+      let errorMessage = "An error occurred while processing your request.";
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.error || errorMessage;
+      }
       setMessages((prevMessages) => [
         ...prevMessages,
         {
           role: "assistant",
-          content: "An error occurred while processing your request.",
+          content: errorMessage,
         },
       ]);
     } finally {
@@ -242,10 +247,10 @@ const GenerateContentContent: React.FC = () => {
                     const match = /language-(\w+)/.exec(className || "");
                     return match ? (
                       <SyntaxHighlighter
-                        style={tomorrow as any}
+                        {...props}
+                        style={tomorrow}
                         language={match[1]}
                         PreTag="div"
-                        {...props}
                       >
                         {String(children).replace(/\n$/, "")}
                       </SyntaxHighlighter>
@@ -287,6 +292,34 @@ const GenerateContentContent: React.FC = () => {
     }
   };
 
+  const deleteChat = async (chatId: string) => {
+    if (!session?.accessToken) return;
+    try {
+      console.log("Attempting to delete chat with ID:", chatId);
+      const response = await axios.delete(`/api/queries/${chatId}`, {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      console.log("Delete response:", response.data);
+      setChats((prevChats) => prevChats.filter((chat) => chat._id !== chatId));
+      if (currentChat === chatId) {
+        setCurrentChat(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Backend error:", error.response.data);
+        alert(
+          `Error deleting chat: ${
+            error.response.data.error || "An unknown error occurred"
+          }`
+        );
+      } else {
+        alert("An error occurred while deleting the chat");
+      }
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-100px)]">
       {/* Sidebar */}
@@ -298,20 +331,31 @@ const GenerateContentContent: React.FC = () => {
           {chats.map((chat) => (
             <div
               key={chat._id}
-              className={`cursor-pointer p-2 rounded-lg mb-2 ${
+              className={`flex items-center justify-between cursor-pointer p-2 rounded-lg mb-2 ${
                 currentChat === chat._id ? "bg-gray-200" : "hover:bg-gray-100"
               }`}
-              onClick={() => loadChat(chat._id)}
             >
-              <div className="flex items-center">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                <div className="flex-1">
-                  <div className="font-medium">{chat.title}</div>
-                  <div className="text-xs text-gray-500">
-                    {new Date(chat.createdAt).toLocaleString()}
+              <div className="flex-1" onClick={() => loadChat(chat._id)}>
+                <div className="flex items-center">
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  <div className="flex-1">
+                    <div className="font-medium">{chat.title}</div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(chat.createdAt).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteChat(chat._id);
+                }}
+              >
+                <Trash2 className="w-4 h-4 text-red-500" />
+              </Button>
             </div>
           ))}
         </ScrollArea>

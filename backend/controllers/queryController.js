@@ -8,6 +8,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const fs = require("fs");
 const path = require("path");
+const mongoose = require("mongoose");
 
 // @desc    Create a new chat or add to existing chat
 // @route   POST /api/queries
@@ -29,30 +30,9 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Model not found", 404));
   }
 
-  // Handle file upload if present
-  if (req.files && req.files.file) {
-    const uploadedFile = req.files.file;
-    const fileName = `${Date.now()}_${uploadedFile.name}`;
-    const uploadDir = path.join(__dirname, "..", "uploads");
-
-    // Create the uploads directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, fileName);
-
-    await uploadedFile.mv(filePath);
-
-    file = await File.create({
-      name: fileName,
-      originalName: uploadedFile.name,
-      path: filePath,
-      mimeType: uploadedFile.mimetype,
-      size: uploadedFile.size,
-      user: req.user.id,
-    });
-  }
+  const genAI = new GoogleGenerativeAI(model.apiKey);
+  const fileManager = new GoogleAIFileManager(model.apiKey);
+  const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
   let query;
   if (chatId) {
@@ -68,7 +48,6 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
       title: text ? text.substring(0, 30) + "..." : "File Upload",
       user: req.user.id,
       model: modelId,
-      file: file ? file._id : undefined,
       messages: [],
     });
   }
@@ -76,30 +55,48 @@ exports.processQuery = asyncHandler(async (req, res, next) => {
   // Add user message to the chat
   query.messages.push({ role: "user", content: text || "File uploaded" });
 
-  let response;
-  try {
-    const genAI = new GoogleGenerativeAI(model.apiKey);
-    const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  let content = [{ text: text || "Process the uploaded file" }];
 
-    let content = [{ text: text || "Process the uploaded file" }];
+  // Handle file upload if present
+  if (req.files && req.files.file) {
+    const uploadedFile = req.files.file;
+    const fileName = `${Date.now()}_${uploadedFile.name}`;
+    const uploadDir = path.join(__dirname, "..", "uploads");
 
-    if (file) {
-      const fileManager = new GoogleAIFileManager(model.apiKey);
-      const uploadResponse = await fileManager.uploadFile(file.path, {
-        mimeType: file.mimeType,
-        displayName: file.originalName,
-      });
-
-      content.unshift({
-        fileData: {
-          mimeType: uploadResponse.file.mimeType,
-          fileUri: uploadResponse.file.uri,
-        },
-      });
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
     }
 
+    const filePath = path.join(uploadDir, fileName);
+    await uploadedFile.mv(filePath);
+
+    const uploadResponse = await fileManager.uploadFile(filePath, {
+      mimeType: uploadedFile.mimetype,
+      displayName: uploadedFile.name,
+    });
+
+    content.unshift({
+      fileData: {
+        mimeType: uploadResponse.file.mimeType,
+        fileUri: uploadResponse.file.uri,
+      },
+    });
+
+    file = await File.create({
+      name: fileName,
+      originalName: uploadedFile.name,
+      path: filePath,
+      mimeType: uploadedFile.mimetype,
+      size: uploadedFile.size,
+      user: req.user.id,
+    });
+
+    query.file = file._id;
+  }
+
+  try {
     const result = await geminiModel.generateContent(content);
-    response = result.response.text();
+    const response = result.response.text();
 
     // Add AI response to the chat
     query.messages.push({ role: "assistant", content: response });
@@ -285,3 +282,24 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
   });
 };
+
+// @desc    Delete a specific chat
+// @route   DELETE /api/queries/:id
+// @access  Private
+exports.deleteQuery = asyncHandler(async (req, res, next) => {
+  const query = await Query.findById(req.params.id);
+
+  if (!query) {
+    return res.status(404).json({ success: false, error: "Chat not found" });
+  }
+
+  if (query.user.toString() !== req.user.id) {
+    return res
+      .status(403)
+      .json({ success: false, error: "Not authorized to delete this chat" });
+  }
+
+  await query.remove();
+
+  res.status(200).json({ success: true, data: {} });
+});

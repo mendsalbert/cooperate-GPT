@@ -10,7 +10,6 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    webpackMemoryOptimizations: true,
     webpackBuildWorker: true,
     serverSourceMaps: false,
   },
@@ -39,6 +38,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   productionBrowserSourceMaps: false,
+  // Add this section to handle the routing issue
+  async rewrites() {
+    return [
+      {
+        source: "/api/queries/:id",
+        destination: "/api/queries/[id]",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

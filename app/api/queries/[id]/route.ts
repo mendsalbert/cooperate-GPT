@@ -13,27 +13,62 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const queryId = params.id;
+  const id = params.id;
+  const { searchParams } = new URL(req.url);
+  const type = searchParams.get("type");
 
   try {
-    const backendResponse = await axios.get(
-      `${process.env.BACKEND_URL}/api/queries/${queryId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-      }
-    );
+    let url;
+    if (type === "chat") {
+      url = `${process.env.BACKEND_URL}/api/queries/chat/${id}`;
+    } else {
+      url = `${process.env.BACKEND_URL}/api/queries/${id}`;
+    }
 
-    if (!backendResponse.data || !backendResponse.data.data) {
+    const backendResponse = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
+
+    if (!backendResponse.data) {
       throw new Error("Invalid response from backend");
     }
 
     return NextResponse.json(backendResponse.data);
   } catch (error) {
-    console.error("Error fetching query history:", error);
+    console.error("Error fetching query/chat history:", error);
     return NextResponse.json(
-      { error: "An error occurred while fetching query history" },
+      { error: "An error occurred while fetching data" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = (await getServerSession(authOptions)) as any;
+
+  if (!session || !session.accessToken) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const queryId = params.id;
+
+  try {
+    await axios.delete(`${process.env.BACKEND_URL}/api/queries/${queryId}`, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting query:", error);
+    return NextResponse.json(
+      { error: "An error occurred while deleting the query" },
       { status: 500 }
     );
   }
