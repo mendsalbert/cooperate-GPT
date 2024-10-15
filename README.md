@@ -182,4 +182,15 @@ FROM_NAME=Cooperate GPT
 
 By following these steps, you should have a fully functional backend for Cooperate GPT. Remember to keep your `.env` file secure and never commit it to version control.
 
+## Data Aggregation and Retrieval
+
+[... Keep the existing content ...]
+
+## Contributing
+
+[... Keep the existing content ...]
+
+## License
+
+[... Keep the existing content ...]
 ````
