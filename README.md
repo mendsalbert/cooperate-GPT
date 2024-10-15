@@ -101,6 +101,7 @@ npm install
 ```
 
 3. Create a `.env` file in the backend directory with the following variables:
+
 ```
 
 PORT=1999
@@ -121,6 +122,7 @@ FROM_NAME=Cooperate GPT
 - Install MongoDB on your system if you haven't already
 - Start the MongoDB service
 - The application will create the necessary collections automatically on first run
+
 
 5. Set up the project structure:
 - Ensure the following directories exist in the `backend` folder:
@@ -180,15 +182,4 @@ FROM_NAME=Cooperate GPT
 
 By following these steps, you should have a fully functional backend for Cooperate GPT. Remember to keep your `.env` file secure and never commit it to version control.
 
-## Data Aggregation and Retrieval
-
-[... Keep the existing content ...]
-
-## Contributing
-
-[... Keep the existing content ...]
-
-## License
-
-[... Keep the existing content ...]
 ````
