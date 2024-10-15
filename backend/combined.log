@@ -940,3 +940,20 @@
 {"level":"info","message":"::1 - - [13/Oct/2024:17:13:30 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-13T17:13:30.997Z"}
 {"level":"info","message":"::1 - - [13/Oct/2024:17:13:31 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-13T17:13:31.991Z"}
 {"level":"info","message":"::1 - - [13/Oct/2024:17:13:32 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-13T17:13:32.362Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:07:15:37 +0000] \"GET /api-docs/swagger-ui-init.js HTTP/1.1\" 200 9694 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36\"\n","timestamp":"2024-10-15T07:15:37.057Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:07:15:37 +0000] \"GET /api-docs/swagger-ui.css HTTP/1.1\" 200 152071 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36\"\n","timestamp":"2024-10-15T07:15:37.095Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:07:15:37 +0000] \"GET /api-docs/swagger-ui-standalone-preset.js HTTP/1.1\" 200 230293 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36\"\n","timestamp":"2024-10-15T07:15:37.109Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:07:15:37 +0000] \"GET /api-docs/swagger-ui-bundle.js HTTP/1.1\" 200 1452753 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36\"\n","timestamp":"2024-10-15T07:15:37.152Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:07:15:37 +0000] \"GET /api-docs/favicon-32x32.png HTTP/1.1\" 304 - \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36\"\n","timestamp":"2024-10-15T07:15:37.260Z"}
+{"level":"info","message":"Server is running on port 1999","timestamp":"2024-10-15T10:00:07.324Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:10:06:18 +0000] \"POST /api/auth/login HTTP/1.1\" 200 271 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T10:06:18.375Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:10:06:30 +0000] \"POST /api/auth/login HTTP/1.1\" 200 271 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T10:06:30.699Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:55:56 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:55:56.620Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:55:57 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:55:57.018Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:55:57 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:55:57.336Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:55:57 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:55:57.653Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:56:02 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:02.264Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:56:02 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:02.592Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:56:03 +0000] \"GET /api/queries HTTP/1.1\" 200 10571 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:03.147Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:56:03 +0000] \"GET /api/queries HTTP/1.1\" 200 10571 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:03.518Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:17:56:14 +0000] \"POST /api/queries HTTP/1.1\" 201 598 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:14.458Z"}
