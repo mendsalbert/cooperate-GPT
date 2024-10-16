@@ -957,3 +957,15 @@
 {"level":"info","message":"::1 - - [15/Oct/2024:17:56:03 +0000] \"GET /api/queries HTTP/1.1\" 200 10571 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:03.147Z"}
 {"level":"info","message":"::1 - - [15/Oct/2024:17:56:03 +0000] \"GET /api/queries HTTP/1.1\" 200 10571 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:03.518Z"}
 {"level":"info","message":"::1 - - [15/Oct/2024:17:56:14 +0000] \"POST /api/queries HTTP/1.1\" 201 598 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T17:56:14.458Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:35 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:35.630Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:36 +0000] \"GET /api/queries HTTP/1.1\" 200 11069 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:36.157Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:37 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:37.058Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:39 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:39.043Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:40 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:40.228Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:10:41 +0000] \"GET /api/queries HTTP/1.1\" 200 11069 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:10:41.724Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:06 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:06.312Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:06 +0000] \"GET /api/queries HTTP/1.1\" 200 11069 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:06.530Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:06 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:06.893Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:07 +0000] \"GET /api/queries HTTP/1.1\" 200 11069 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:07.286Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:08 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:08.838Z"}
+{"level":"info","message":"::1 - - [15/Oct/2024:18:11:09 +0000] \"GET /api/models HTTP/1.1\" 200 305 \"-\" \"axios/1.7.7\"\n","timestamp":"2024-10-15T18:11:09.192Z"}
