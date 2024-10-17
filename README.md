@@ -141,5 +141,3 @@ npm run dev  `
 The backend API is documented using Swagger. Access the documentation at:
 
 http://localhost:1999/api-docs
-
-## Project Structure
